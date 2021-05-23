@@ -27,8 +27,10 @@ alpha = {}
 ER = {}
 Er={}
 
+#loading CSS
 local_css("style.css")
 
+# HTML codes
 capm_intro = """
 <ul>
     <li>CAPM is one of the most important models in the finance.
@@ -109,6 +111,9 @@ footer = """
 </div>
 """
 
+#Utility Functions
+
+#load stock data from Yahoo Finance
 def load_data(stocks):
     datas = []
     for ticker in stocks:
@@ -121,6 +126,7 @@ def load_data(stocks):
         df[stocks[i]] = datas[i]["Adj Close"]
     return df
 
+#Plotting the raw data
 def plot_raw_data(data):
     fig = go.Figure()
     for stock in data.columns[1:]:
@@ -128,7 +134,7 @@ def plot_raw_data(data):
     fig.layout.update(title_text = "Time Series Data", xaxis_rangeslider_visible=True)
     st.plotly_chart(fig)
 
-
+# Calculating the daily return
 def daily_return(df):
   df_daily_return = df.copy()
   for i in df.columns[1:]:
@@ -160,7 +166,7 @@ def Fun1(returns,rev):
         ret.append(temp[i][0])
     return ret
 
-
+# doing CAPM Analysis of Stocks
 def cal_capm():
     st.subheader("Calculating annualized rate of return for every stock using CAPM")
     st.latex(r'ER_i = R_f + \beta_i( ER_m -R_f) ' )
@@ -178,8 +184,11 @@ def return_check(x):
         return "Not suggested to invest, doesn't returns better than S&P 500"
 
 
+ # The main code starts here
 
 st.sidebar.image(panda)
+
+#General Introduction
 st.title("Capital Asset Pricing Model")
 st.markdown(capm_intro,unsafe_allow_html=True)
 st.header(" Understanding the Capital Asset Pricing Model (CAPM)")
@@ -189,42 +198,43 @@ st.image(formula)
 st.markdown(rfrate_content,unsafe_allow_html=True)
 st.markdown(rmrate_content,unsafe_allow_html=True)
 st.markdown(beta_content,unsafe_allow_html=True)
+
+#Loading live Stock Data
 st.header("Load live Stock Data")
 curr_stocks = load_data(stocks)
 st.write(curr_stocks.tail(15))
 st.subheader("Ticker Key")
 
-
+# Adding ticker Key
 ticker_key = "<ul>"
-
 for ticker in tickers:
     ticker_key = ticker_key + f'<li><h4>{ticker} : {tickers[ticker]}</h4></li>'
-
 ticker_key =  ticker_key + "</ul>"
-
 st.write(tickers)
+
+#Plotting Raw Data
 plot_raw_data(curr_stocks)
+
+#Calculating Daily Returns
 st.header("Calculating Daily Returns")
 st.image(formula2)
 stocks_daily_return = daily_return(curr_stocks)
 st.write(stocks_daily_return.tail(15))
+
+#Calculating Average Daily Return
 st.write("Let's check the average daily returns ")
-
-
 means = stocks_daily_return.mean()
 st.write(means)
 means_dummy = means.copy()
 means_dummy.drop(columns=["^GSPC"])
-
 st.write(f"The average return of S&P 500 is {round(means['^GSPC'],3)}.")
 st.write(f"Amoung other stocks, {tickers[max(means_dummy.items(), key=operator.itemgetter(1))[0]]} has the highest average return and {tickers[min(means_dummy.items(), key=operator.itemgetter(1))[0]]} has the lowest average return.")
 
 
 
-
-st.header("Calculating Beta for each stock")
+# Calcuating Alpha and Beta
+st.header("Calculating Alpha and Beta for each stock")
 st.markdown(alpha_content,unsafe_allow_html=True)
-
 for ticker in tickers:
     if ticker != "^GSPC":
         fig = go.Figure()
@@ -238,26 +248,19 @@ for ticker in tickers:
         st.write(f"Beta = {round(b,3)}, Alpha = {round(a,3)} ")
         st.write(f"{tickers[ticker]} stocks are {fun(b)} ")
         
-
+#Calculating Average Expected return for each stock
 st.header("Calculating expected return for each stock")
-
-
 rf = 1.63
 rm = round(means['^GSPC']*251,3)
 st.write(f"The current risk free rate (Rf) is {rf}%")
-
 st.subheader("Let's calculate the annualized rate of return for S&P500 ")
 st.write("Note that out of 365 days/year, stock exchanges are closed for 104 days during weekend days (Saturday and Sunday) ")
-
 st.image(formula3)
 st.write(f"Thus, the current expected value of Rm is {rm}%")
 cal_capm()
 
-
+#The content of the subheader tells everything,LOL
 st.subheader("Calculating returns for different portfolio combinations")
-
-
-
 port = "<ul>"
 equal_port = f"""
     <ul>
@@ -315,7 +318,7 @@ low_port = f"""
 port = equal_port + personal_port + manu_port + consumer_port + high_port + low_port
 st.markdown(port,unsafe_allow_html=True)
 
-
+#Again, LOL
 st.header("Check the performance of your own choice of portfolio")
 
 selected_stocks = st.multiselect("Select your stocks", list(Er.keys()))
