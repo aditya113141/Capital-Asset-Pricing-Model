@@ -19,17 +19,16 @@ footer {visibility: hidden;}
 }
 
 
-
-  .fa {
-    font-size: 36px;
-    width: 50px;
-    text-align: center;
-    text-decoration: none;
-  }
+.fa {
+   font-size: 36px;
+   width: 50px;
+   text-align: center;
+   text-decoration: none;
+}
   
-  /* Add a hover effect if you want */
-  .fa:hover {
-    opacity: 0.7;
-  }
+/* Add a hover effect if you want */
+.fa:hover {
+   opacity: 0.7;
+}
 
   
