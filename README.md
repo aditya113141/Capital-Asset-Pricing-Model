@@ -29,7 +29,7 @@ Calculates the returns of various portfolio combinations.
  </div>
 
 
-## Demo
+## Dem
 
 <div align="center">
   <img src="screenshot.png">
